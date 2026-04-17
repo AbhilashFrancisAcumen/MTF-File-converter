@@ -71,12 +71,12 @@ export default function App() {
       setLoading(true);
 
       const report1 = await readExcelFile(file1); // MTF 1
-      const report3 = await readExcelFile(file2); // mtf 3
-      const report7 = await readExcelFile(file3); // mtf 7
+      const report2 = await readExcelFile(file2); // mtf 3
+      const report3 = await readExcelFile(file3); // mtf 7
 
       const report1Map = {};
+      const report2Map = {};
       const report3Map = {};
-      const report7Map = {};
 
       // File 1 => Account ID
       report1.forEach((row) => {
@@ -87,33 +87,33 @@ export default function App() {
       });
 
       // File 2 => AccountID
-      report3.forEach((row) => {
+      report2.forEach((row) => {
         const key = row["AccountID"];
+        if (key) {
+          report2Map[key] = row;
+        }
+      });
+
+      // File 3 => Account ID
+      report3.forEach((row) => {
+        const key = row["Account ID"];
         if (key) {
           report3Map[key] = row;
         }
       });
 
-      // File 3 => Account ID
-      report7.forEach((row) => {
-        const key = row["Account ID"];
-        if (key) {
-          report7Map[key] = row;
-        }
-      });
-
       const allKeys = new Set([
         ...Object.keys(report1Map),
+        ...Object.keys(report2Map),
         ...Object.keys(report3Map),
-        ...Object.keys(report7Map),
       ]);
 
       const finalData = [];
 
       allKeys.forEach((accountId) => {
         const r1 = report1Map[accountId] || {};
-        const r3 = report3Map[accountId] || {};
-        const r7 = report7Map[accountId] || {};
+        const r3 = report2Map[accountId] || {};
+        const r7 = report3Map[accountId] || {};
 
         // Main values
         const D = toNumber(r1["MTF Financial Balance"]);
@@ -255,7 +255,7 @@ export default function App() {
       <p>Upload the 3 reports and download the final output file.</p>
 
       <div style={{ marginBottom: "15px" }}>
-        <label><strong>Upload Report 1 (MTF 1.xlsx)</strong></label>
+        <label><strong>Upload Report 1</strong></label>
         <br />
         <input
           type="file"
@@ -265,7 +265,7 @@ export default function App() {
       </div>
 
       <div style={{ marginBottom: "15px" }}>
-        <label><strong>Upload Report 3 (mtf 3.xlsx)</strong></label>
+        <label><strong>Upload Report 2</strong></label>
         <br />
         <input
           type="file"
@@ -275,7 +275,7 @@ export default function App() {
       </div>
 
       <div style={{ marginBottom: "15px" }}>
-        <label><strong>Upload Report 7 (mtf 7.xlsx)</strong></label>
+        <label><strong>Upload Report 3</strong></label>
         <br />
         <input
           type="file"
