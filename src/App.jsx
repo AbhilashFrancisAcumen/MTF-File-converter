@@ -558,78 +558,70 @@ export default function App() {
         );
       });
 
-      const allKeys = new Set([
-        ...Object.keys(report1Map),
-        ...Object.keys(report3Map),
-        ...Object.keys(report7Map),
-        ...Object.keys(totalStockMap),
-        ...Object.keys(fundedStockMap),
-      ]);
+      const allKeys = Object.keys(report3Map).sort();
 
       const finalData = [];
 
-      Array.from(allKeys)
-        .sort()
-        .forEach((accountId) => {
-          const r1 = report1Map[accountId] || {};
-          const r3 = report3Map[accountId] || {};
-          const r7 = report7Map[accountId] || {};
-          const ts = totalStockMap[accountId] || {};
-          const fs = fundedStockMap[accountId] || {};
+      allKeys.forEach((accountId) => {
+        const r1 = report1Map[accountId] || {};
+        const r3 = report3Map[accountId] || {};
+        const r7 = report7Map[accountId] || {};
+        const ts = totalStockMap[accountId] || {};
+        const fs = fundedStockMap[accountId] || {};
 
-          const tradeDate = getValidTradeDate(
-            r3.tradedate,
-            fileTradeDateMap[FILE_TYPES.REPORT_3],
-            r1.tradedate,
-            fileTradeDateMap[FILE_TYPES.REPORT_1],
-            r7.tradedate,
-            fileTradeDateMap[FILE_TYPES.REPORT_7],
-            fs.holdingDate
-          );
+        const tradeDate = getValidTradeDate(
+          r3.tradedate,
+          fileTradeDateMap[FILE_TYPES.REPORT_3],
+          r1.tradedate,
+          fileTradeDateMap[FILE_TYPES.REPORT_1],
+          r7.tradedate,
+          fileTradeDateMap[FILE_TYPES.REPORT_7],
+          fs.holdingDate
+        );
 
-          const D = toNumber(r1.mtfFinancialBalance);
-          const E = toNumber(r1.mtfFunding);
-          const F = toNumber(r1.mtfCashBalance);
-          const G = toNumber(r7.beforeHairCut);
-          const H = toNumber(r7.afterHairCut);
-          const I = toNumber(fs.holdingValue);
-          const J = toNumber(fs.totalStockValue);
-          const K = toNumber(r3.mtfMargin);
-          const L = toNumber(r3.shortExcess);
-          const M = toNumber(r3.mtfLoss);
-          const N = toNumber(r3.fundedStockValue);
-          const O = toNumber(r3.runningLedgerAsonDate);
-          const P = D + O + F;
-          const Q = toNumber(ts.valueAfterVar);
-          const R = toNumber(ts.totalValue);
-          const S = P + Q;
+        const D = toNumber(r1.mtfFinancialBalance);
+        const E = toNumber(r1.mtfFunding);
+        const F = toNumber(r1.mtfCashBalance);
+        const G = toNumber(r7.beforeHairCut);
+        const H = toNumber(r7.afterHairCut);
+        const I = toNumber(fs.holdingValue);
+        const J = toNumber(fs.totalStockValue);
+        const K = toNumber(r3.mtfMargin);
+        const L = toNumber(r3.shortExcess);
+        const M = toNumber(r3.mtfLoss);
+        const N = toNumber(r3.fundedStockValue);
+        const O = toNumber(r3.runningLedgerAsonDate);
+        const P = D + O + F;
+        const Q = toNumber(ts.valueAfterVar);
+        const R = toNumber(ts.totalValue);
+        const S = P + Q;
 
-          finalData.push({
-            TradeDate: tradeDate,
-            "Account ID": accountId,
-            "Account Name": getRowName(
-              r7.accountName,
-              fs.accountName,
-              ts.clientName
-            ),
-            "Client MTF Ledger Balance (Funded Value)": D,
-            "MTF Funded Amount": E,
-            "MTF Cash Collateral": F,
-            "MTF share Collateral Full 100% (BHC) Value": G,
-            "MTF share Collateral after hair-cut (AHC) Value": H,
-            "MTF Funded Stock market value (AHC)": I,
-            "MTF Funded Stock market value (BHC)": J,
-            "MTF Margin": K,
-            "Excess/ short Available Limit": L,
-            "MTF Loss": M,
-            "MTF Funded Stock Funded Value": N,
-            "DEF (Normal) Ledger Balance": O,
-            "Total Ledger Balance MTF + NON MTF + Cash": P,
-            "Total Collateral Value (AHC)": Q,
-            "Total Collateral Value (BHC)": R,
-            "Net Diff": S,
-          });
+        finalData.push({
+          TradeDate: tradeDate,
+          "Account ID": accountId,
+          "Account Name": getRowName(
+            r7.accountName,
+            fs.accountName,
+            ts.clientName
+          ),
+          "Client MTF Ledger Balance (Funded Value)": D,
+          "MTF Funded Amount": E,
+          "MTF Cash Collateral": F,
+          "MTF share Collateral Full 100% (BHC) Value": G,
+          "MTF share Collateral after hair-cut (AHC) Value": H,
+          "MTF Funded Stock market value (AHC)": I,
+          "MTF Funded Stock market value (BHC)": J,
+          "MTF Margin": K,
+          "Excess/ short Available Limit": L,
+          "MTF Loss": M,
+          "MTF Funded Stock Funded Value": N,
+          "DEF (Normal) Ledger Balance": O,
+          "Total Ledger Balance MTF + NON MTF + Cash": P,
+          "Total Collateral Value (AHC)": Q,
+          "Total Collateral Value (BHC)": R,
+          "Net Diff": S,
         });
+      });
 
       const worksheet = XLSX.utils.json_to_sheet(finalData, {
         header: OUTPUT_COLUMNS.map((col) => col.key),
