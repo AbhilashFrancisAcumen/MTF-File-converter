@@ -552,10 +552,14 @@ export default function App() {
           pick(row, "Holding Date", "TradeDate", "Trade Date")
         );
 
+        const holdingQty = toNumber(pick(row, "Holding"));
+        const closeRate = toNumber(pick(row, "Close Rate"));
+
+        // AHC value from funded stock file
         fundedStockMap[key].holdingValue += toNumber(pick(row, "Holding Value"));
-        fundedStockMap[key].totalStockValue += toNumber(
-          pick(row, "Total Stock Value")
-        );
+
+        // BHC value calculated from funded stock file: Holding * Close Rate
+        fundedStockMap[key].totalStockValue += holdingQty * closeRate;
       });
 
       const allKeys = Object.keys(report3Map).sort();
@@ -612,7 +616,7 @@ export default function App() {
           "MTF Funded Stock market value (AHC)": I,
           "MTF Funded Stock market value (BHC)": J,
           "MTF Margin": K,
-          "Excess/ short Available Limit": L,
+          "Excess / short Available Limit": L,
           "MTF Loss": M,
           "MTF Funded Stock Funded Value": N,
           "DEF (Normal) Ledger Balance": O,
