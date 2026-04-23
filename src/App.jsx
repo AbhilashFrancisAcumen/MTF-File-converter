@@ -599,7 +599,7 @@ export default function App() {
         const P = D + O + F;
         const Q = toNumber(ts.valueAfterVar);
         const R = toNumber(ts.totalValue);
-        const S = P + Q;
+        const S = P + R;
 
         finalData.push({
           TradeDate: tradeDate,
